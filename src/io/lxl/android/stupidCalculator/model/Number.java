@@ -14,6 +14,11 @@ public class Number extends GestureObject {
     }
 
     @Override
+    String evalString() {
+        return toString();
+    }
+
+    @Override
     public String toString() {
         return new Integer(this.mValue).toString();
 

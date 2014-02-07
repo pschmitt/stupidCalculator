@@ -8,6 +8,9 @@ public class Operator extends GestureObject {
 
     private TYPE mType;
 
+    protected Operator() {
+    }
+
     public Operator(TYPE type) {
         this.mType = type;
     }

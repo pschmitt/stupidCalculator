@@ -12,4 +12,10 @@ public class Number {
         }
         mValue = value;
     }
+
+    @Override
+    public String toString() {
+        return new Integer(this.mValue).toString();
+
+    }
 }

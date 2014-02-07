@@ -11,4 +11,24 @@ public class Operator {
     public Operator(TYPE type) {
         this.mType = type;
     }
+
+    @Override
+    public String toString() {
+        String str;
+        switch (this.mType) {
+            case PLUS:
+                str = "+"
+                break;
+            case MINUS:
+                str = "-";
+                break;
+            case DIV:
+                str = "/";
+                break;
+            case MULT:
+                str = "x"
+                break;
+        }
+        return str;
+    }
 }

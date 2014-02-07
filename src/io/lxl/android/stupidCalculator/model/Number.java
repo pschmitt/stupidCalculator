@@ -3,7 +3,7 @@ package io.lxl.android.stupidCalculator.model;
 /**
  * Created by pschmitt on 2/7/14.
  */
-public class Number {
+public class Number extends GestureObject {
     private int mValue;
 
     public Number(int value) {

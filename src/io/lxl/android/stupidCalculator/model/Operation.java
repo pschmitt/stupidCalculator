@@ -22,22 +22,26 @@ public class Operation extends GestureObject {
         }
         GestureObject firstObject = mObjectList.get(0);
         // An operation should start with a number or an operation
-        if (!(firstObject instanceof Number) || !(firstObject instanceof Operation)) {
+        if (!(firstObject instanceof Number) && !(firstObject instanceof Operation)) {
             return false;
         }
         for (GestureObject gestureObject : mObjectList) {
             if (gestureObject instanceof Number) {
                 // Two consecutive numbers aren't allowed
                 // An operation cannot be preceded by a number
-                if (previousObject instanceof Number || previousObject instanceof Operation) {
+                if (previousObject != null
+                        && (previousObject instanceof Number || previousObject instanceof Operation)
+                        && !(previousObject instanceof EqualOperator)) {
                     return false;
                 }
-            } else if (gestureObject instanceof Operator) {
+            } else if (gestureObject instanceof Operator
+                    && !(gestureObject instanceof EqualOperator)) {
                 if (previousObject == null || !(previousObject instanceof Number)) {
                     return false;
                 }
             } else if (gestureObject instanceof Operation) {
-                if (previousObject != null || !(previousObject instanceof Operator)) {
+                if ((previousObject != null || !(previousObject instanceof Operator)
+                        || previousObject instanceof EqualOperator)) {
                     return false;
                 }
             } else if (gestureObject instanceof EqualOperator) {
@@ -71,8 +75,12 @@ public class Operation extends GestureObject {
         for (GestureObject gestureObject : mObjectList) {
             sb.append(gestureObject.toString());
         }
-        if (!mObjectList.isEmpty() && mObjectList.get(mObjectList.size() - 1) instanceof EqualOperator) {
-            sb.append(getResult());
+        if (!mObjectList.isEmpty()) {
+            if (isValid()) {
+                sb.append(getResult()).append("✓");
+            } else {
+                sb.append("✗");
+            }
         }
         return sb.toString();
     }

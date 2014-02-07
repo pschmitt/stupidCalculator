@@ -14,10 +14,10 @@ public class Operator extends GestureObject {
 
     @Override
     public String toString() {
-        String str;
+        String str = null;
         switch (this.mType) {
             case PLUS:
-                str = "+"
+                str = "+";
                 break;
             case MINUS:
                 str = "-";
@@ -26,7 +26,7 @@ public class Operator extends GestureObject {
                 str = "/";
                 break;
             case MULT:
-                str = "x"
+                str = "x";
                 break;
         }
         return str;

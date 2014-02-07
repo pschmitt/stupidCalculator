@@ -2,9 +2,13 @@ package io.lxl.android.stupidCalculator.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.GestureDetector;
 import android.widget.TextView;
 import io.lxl.android.stupidCalculator.R;
 import io.lxl.android.stupidCalculator.model.GestureObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends Activity {
 

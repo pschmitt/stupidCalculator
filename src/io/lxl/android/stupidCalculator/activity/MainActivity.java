@@ -5,12 +5,22 @@ import android.os.Bundle;
 import android.widget.LinearLayout;
 import io.lxl.android.stupidCalculator.R;
 import io.lxl.android.stupidCalculator.listener.MyOnTouchListener;
+import android.widget.TextView;
+import io.lxl.android.stupidCalculator.model.Number;
+import io.lxl.android.stupidCalculator.model.Operation;
+import io.lxl.android.stupidCalculator.model.Operator;
 
 public class MainActivity extends Activity {
 
 
     private static final String DEBUG_TAG = "Velocity";
+    private TextView mCalculusView;
+    private Operation mOperation;
 
+
+    /**
+     * Called when the activity is first created.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,5 +29,17 @@ public class MainActivity extends Activity {
         MyOnTouchListener activitySwipeDetector = new MyOnTouchListener(this);
         mainLayout.setOnTouchListener(activitySwipeDetector);
 
+        // Retain views
+        mCalculusView = (TextView) findViewById(R.id.text_calculus);
+
+        // Init
+        mOperation = new Operation();
+
+        // Test
+        mOperation.addObject(new Number(9));
+        mOperation.addObject(new Operator(Operator.TYPE.MULT));
+        mOperation.addObject(new Number(7));
+        // mOperation.addObject(new EqualOperator());
+        mCalculusView.setText(mOperation.toString() + " = " + mOperation.getResult());
     }
 }

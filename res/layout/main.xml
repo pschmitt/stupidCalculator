@@ -5,5 +5,13 @@
               android:layout_height="fill_parent"
               android:id = "@+id/main"
         >
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/preview_calculus"
+            android:id="@+id/text_calculus"
+            android:layout_gravity="right"
+            android:textSize="55sp"/>
 </LinearLayout>
 

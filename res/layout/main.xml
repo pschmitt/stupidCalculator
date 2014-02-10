@@ -5,13 +5,25 @@
               android:layout_height="fill_parent"
               android:id = "@+id/main"
         >
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/preview_calculus"
-            android:id="@+id/text_calculus"
-            android:layout_gravity="right"
-            android:textSize="55sp"/>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" android:gravity="center_vertical|right" android:weightSum="1">
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="55sp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="0"
+                android:id="@+id/actual_calculus"
+                android:gravity="center_vertical|left"
+                android:layout_weight="0.96"/>
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/preview_calculus"
+                android:id="@+id/text_calculus"
+                android:textSize="55sp" android:gravity="right"/>
+    </LinearLayout>
 </LinearLayout>
 

@@ -108,11 +108,14 @@ public class MyOnTouchListener implements View.OnTouchListener {
         return false;
     }
 
+    private boolean mEqualInput;
+
     private boolean twoFingerAction(MotionEvent event) {
         // TODO: Handle MINUS input
         switch (event.getAction()) {
             case MotionEvent.ACTION_MOVE:
                 Log.d(TAG, "Moving with 2 fingers");
+                mEqualInput = true;
                 return true;
             case MotionEvent.ACTION_CANCEL:
                 Log.d(TAG, "Cancel 2 fingers");
@@ -120,12 +123,17 @@ public class MyOnTouchListener implements View.OnTouchListener {
             case MotionEvent.ACTION_POINTER_UP:
             case MotionEvent.ACTION_UP:
                 Log.d(TAG, "UP 2 fingers");
-                this.activity.AddingOP(new EqualOperator());
-                mTimeRequestResult = System.currentTimeMillis();
-                mRequestedResult = true;
+                if (mEqualInput) {
+                    this.activity.AddingOP(new EqualOperator());
+                    mTimeRequestResult = System.currentTimeMillis();
+                    mRequestedResult = true;
+                } else {
+                    this.activity.AddingOP(new Operator(Operator.TYPE.MINUS));
+                }
                 return true;
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_POINTER_DOWN:
+                mEqualInput = false;
                 Log.d(TAG, "DOWN 2 fingers");
                 return true;
         }
@@ -169,6 +177,7 @@ public class MyOnTouchListener implements View.OnTouchListener {
 
         if (mRequestedResult) {
             if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_POINTER_UP) {
+                // FIXME: This isn't working!
                 if (System.currentTimeMillis() - mTimeRequestResult > 3000) {
                     activity.reset(); // Note: this sets mRequestedResult to false
                 }

@@ -4,6 +4,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import io.lxl.android.stupidCalculator.activity.MainActivity;
+import io.lxl.android.stupidCalculator.model.EqualOperator;
 import io.lxl.android.stupidCalculator.model.Operator;
 import io.lxl.android.stupidCalculator.model.Vector2D;
 import io.lxl.android.stupidCalculator.utils.MathUtils;
@@ -13,13 +14,14 @@ import io.lxl.android.stupidCalculator.utils.MathUtils;
  */
 public class MyOnTouchListener implements View.OnTouchListener {
 
-    static final String Tag = "MyGestureListener";
+    static final String TAG = "MyGestureListener";
     private MainActivity activity;
-    static final int MIN_DISTANCE = 100;
+    static final int MIN_DISTANCE = 500;
     private double downX;
     private double downY;
     //private ArrayList<Vector2D> listpoints;
     int nb = 0;
+    private boolean mTwoFingerSwipe = false;
 
     public MyOnTouchListener(MainActivity activity) {
         //listpoints = new ArrayList<Vector2D>();
@@ -29,14 +31,7 @@ public class MyOnTouchListener implements View.OnTouchListener {
         this.downY = 0;
     }
 
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        int maskedAction = event.getActionMasked();
-        int nbptAction = event.getPointerCount();
-
-        Log.d(Tag, "Evt action  = " + maskedAction);
-        Log.d(Tag, "Evt nb touch = " + nbptAction);
-
+    private boolean oneFingerAction(MotionEvent event) {
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN: {
                 //listpoints.add(new Vector2D(event.getX(),event.getY()));
@@ -46,8 +41,8 @@ public class MyOnTouchListener implements View.OnTouchListener {
             case MotionEvent.ACTION_MOVE: {
                 Vector2D swipe = MathUtils.vectorFromPoint(downX, downY, event.getX(), event.getY());
 
-                double lengt = swipe.length();
-                if (lengt > MIN_DISTANCE && nb < 9) {
+                double length = swipe.length();
+                if (length > MIN_DISTANCE && nb < 9) {
                     this.nb++;
                     this.downX = event.getX();
                     this.downY = event.getY();
@@ -67,41 +62,79 @@ public class MyOnTouchListener implements View.OnTouchListener {
                     Vector2D beforelast = MathUtils.vectorFromPoint(lastptminus3.getX(),lastptminus3.getY(),lastptminus2.getX(),lastptminus2.getY());
 
                     double angle = MathUtils.angleFromTwoPoint((int)beforelast.getX(),(int)beforelast.getY(),(int)last.getX(),(int)last.getY());
-                    Log.d(Tag, "Angle = " + angle);
+                    Log.d(TAG, "Angle = " + angle);
 
                     if (angle>45.0)
                     {
                         nb++;
                         listpoints.clear();
                         listpoints.add(new Vector2D(event.getX(),event.getY()));
-                        Log.d(Tag, "nb = " + nb);
+                        Log.d(TAG, "nb = " + nb);
                     }
                 }*/
                 return true;
             }
             case MotionEvent.ACTION_UP: {
                 if (this.activity.isChiffre()) {
-                    this.activity.AddingNB(nb);
-
+                    this.activity.AddingNB(new io.lxl.android.stupidCalculator.model.Number(nb));
                 } else {
-                    this.activity.AddingOP(Operator.TYPE.PLUS);
+                    this.activity.AddingOP(new Operator(Operator.TYPE.PLUS));
                 }
                 this.nb = 0;
                 return true;
             }
             case MotionEvent.ACTION_POINTER_UP: {
-                switch (nbptAction) {
+                switch (event.getPointerCount()) {
                     case 2:
-                        this.activity.AddingOP(Operator.TYPE.MINUS);
+                        this.activity.AddingOP(new Operator(Operator.TYPE.MINUS));
                         return true;
                     case 3:
-                        this.activity.AddingOP(Operator.TYPE.MULT);
+                        this.activity.AddingOP(new Operator(Operator.TYPE.MULT));
                         return true;
                     case 4:
-                        this.activity.AddingOP(Operator.TYPE.DIV);
+                        this.activity.AddingOP(new Operator(Operator.TYPE.DIV));
                         return true;
                 }
             }
+        }
+        return false;
+    }
+
+    private boolean twoFingerAction(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_MOVE:
+                Log.d(TAG, "Moving with 2 fingers");
+                break;
+            case MotionEvent.ACTION_CANCEL:
+                Log.d(TAG, "Cancel 2 fingers");
+                break;
+            case MotionEvent.ACTION_POINTER_UP:
+            case MotionEvent.ACTION_UP:
+                Log.d(TAG, "UP 2 fingers");
+                this.activity.AddingOP(new EqualOperator());
+                break;
+            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_POINTER_DOWN:
+                Log.d(TAG, "DOWN 2 fingers");
+                break;
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        int maskedAction = event.getActionMasked();
+        int nbptAction = event.getPointerCount();
+
+        Log.d(TAG, "Evt action  = " + maskedAction);
+        Log.d(TAG, "Evt nb touch = " + nbptAction);
+
+        switch (nbptAction) {
+            case 1:
+                return oneFingerAction(event);
+            case 2:
+                return twoFingerAction(event);
         }
         return false;
     }

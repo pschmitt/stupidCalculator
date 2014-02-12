@@ -33,6 +33,14 @@ public class Operation extends GestureObject {
         if (!(firstObject instanceof Number) && !(firstObject instanceof Operation)) {
             return false;
         }
+
+        if (mComponents.size() > 0) {
+            // The last component mustn't be a number etc, it has to be an equal sign
+            GestureObject lastObject = mComponents.get(mComponents.size() - 1);
+            if (!(lastObject instanceof EqualOperator))
+                return false;
+        }
+
         for (GestureObject gestureObject : mComponents) {
             if (gestureObject instanceof Number) {
                 // Two consecutive numbers aren't allowed
@@ -75,7 +83,7 @@ public class Operation extends GestureObject {
             throw new ArithmeticException("This operation is invalid");
         }
         // TODO!
-        BigDecimal result = null;
+        BigDecimal result;
 
         Expression expression = new Expression(evalString());
         result = expression.eval();
@@ -114,17 +122,21 @@ public class Operation extends GestureObject {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
+        String prefix = "";
         for (GestureObject gestureObject : mComponents) {
+            sb.append(prefix);
+            prefix = " ";
             sb.append(gestureObject.toString());
         }
-        /*
+
         if (!mComponents.isEmpty()) {
             if (isValid()) {
-                sb.append(getResult()).append("✓");
+                //sb.append("✓");
+                sb.append(getResult().intValue()).append("✓");
             } else {
                 sb.append("✗");
             }
-        } */
+        }
         return sb.toString();
     }
 

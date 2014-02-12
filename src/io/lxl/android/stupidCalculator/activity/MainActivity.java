@@ -41,17 +41,11 @@ public class MainActivity extends Activity implements Observer {
         // Retain views
         mCalculusView = (TextView) findViewById(R.id.text_calculus);
         mActualView = (TextView) findViewById(R.id.actual_calculus);
+        resetViews();
 
         // Init
         mOperation = new Operation();
         registerObserver();
-
-        // Test
-        //mOperation.addObject(new Number(9));
-        //mOperation.addObject(new Operator(Operator.TYPE.MULT));
-        //mOperation.addObject(new Number(7));
-        // mOperation.addObject(new EqualOperator());
-        //mCalculusView.setText(mOperation.toString() + " = " + mOperation.getResult());
     }
 
     @Override
@@ -70,6 +64,11 @@ public class MainActivity extends Activity implements Observer {
             mOperation.addObserver(this);
     }
 
+    private void resetViews() {
+        mCalculusView.setText("");
+        mActualView.setText("");
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
@@ -84,7 +83,8 @@ public class MainActivity extends Activity implements Observer {
         switch (item.getItemId()) {
             case R.id.action_reset:
                 mOperation.reset();
-                mCalculusView.setText("");
+                resetViews();
+                chiffre = true;
                 return true;
         }
         return false;
@@ -94,18 +94,29 @@ public class MainActivity extends Activity implements Observer {
         mActualView.setText(Integer.toString(nb));
     }
 
-    public void AddingNB(int nb){
-        mOperation.addObject(new Number(nb));
+    // TODO Refactor -> addNumber
+    public void AddingNB(Number nb) {
+        mOperation.addObject(nb);
         mCalculusView.setText(mOperation.toString());
         mActualView.setText("");
         this.chiffre = false;
     }
 
-    public void AddingOP(Operator.TYPE op){
-        mOperation.addObject(new Operator(op));
+    // TODO Refactor -> addOperator
+    public void AddingOP(Operator op) {
+        mOperation.addObject(op);
+        // If user drew an equal sign, show him the result
+        /*
+        if (op instanceof EqualOperator) {
+            BigDecimal result = mOperation.getResult();
+            if (result != null)
+                mCalculusView.setText(mCalculusView.getText() + mOperation.getResult().toString());
+        }
+        */
         this.chiffre = true;
     }
 
+    // TODO Refactor -> lastInputWasNumber
     public boolean isChiffre()
     {
         return chiffre;

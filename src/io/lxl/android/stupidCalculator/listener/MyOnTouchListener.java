@@ -3,10 +3,10 @@ package io.lxl.android.stupidCalculator.listener;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import io.lxl.android.stupidCalculator.MathUtils;
 import io.lxl.android.stupidCalculator.activity.MainActivity;
 import io.lxl.android.stupidCalculator.model.Operator;
 import io.lxl.android.stupidCalculator.model.Vector2D;
+import io.lxl.android.stupidCalculator.utils.MathUtils;
 
 /**
  * Created by skad on 07/02/14.
@@ -21,7 +21,7 @@ public class MyOnTouchListener implements View.OnTouchListener {
     //private ArrayList<Vector2D> listpoints;
     int nb = 0;
 
-    public MyOnTouchListener(MainActivity activity){
+    public MyOnTouchListener(MainActivity activity) {
         //listpoints = new ArrayList<Vector2D>();
         this.activity = activity;
         this.nb = 0;
@@ -37,22 +37,21 @@ public class MyOnTouchListener implements View.OnTouchListener {
         Log.d(Tag, "Evt action  = " + maskedAction);
         Log.d(Tag, "Evt nb touch = " + nbptAction);
 
-        switch(event.getActionMasked()){
+        switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN: {
                 //listpoints.add(new Vector2D(event.getX(),event.getY()));
                 this.activity.Updatechar(nb);
                 return true;
             }
-            case MotionEvent.ACTION_MOVE:{
+            case MotionEvent.ACTION_MOVE: {
                 Vector2D swipe = MathUtils.vectorFromPoint(downX, downY, event.getX(), event.getY());
 
                 double lengt = swipe.length();
-                if (lengt>MIN_DISTANCE && nb < 9)
-                {
-                      this.nb++;
-                      this.downX = event.getX();
-                      this.downY = event.getY();
-                      this.activity.Updatechar(nb);
+                if (lengt > MIN_DISTANCE && nb < 9) {
+                    this.nb++;
+                    this.downX = event.getX();
+                    this.downY = event.getY();
+                    this.activity.Updatechar(nb);
 
                 }
 
@@ -80,21 +79,18 @@ public class MyOnTouchListener implements View.OnTouchListener {
                 }*/
                 return true;
             }
-            case MotionEvent.ACTION_UP:{
-                if(this.activity.isChiffre())
-                {
+            case MotionEvent.ACTION_UP: {
+                if (this.activity.isChiffre()) {
                     this.activity.AddingNB(nb);
 
-                }
-                else
-                {
-                     this.activity.AddingOP(Operator.TYPE.PLUS);
+                } else {
+                    this.activity.AddingOP(Operator.TYPE.PLUS);
                 }
                 this.nb = 0;
                 return true;
             }
-            case MotionEvent.ACTION_POINTER_UP:{
-                switch(nbptAction ){
+            case MotionEvent.ACTION_POINTER_UP: {
+                switch (nbptAction) {
                     case 2:
                         this.activity.AddingOP(Operator.TYPE.MINUS);
                         return true;

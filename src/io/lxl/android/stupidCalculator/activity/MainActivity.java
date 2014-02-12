@@ -2,21 +2,28 @@ package io.lxl.android.stupidCalculator.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import io.lxl.android.stupidCalculator.R;
 import io.lxl.android.stupidCalculator.listener.MyOnTouchListener;
-import android.widget.TextView;
 import io.lxl.android.stupidCalculator.model.Number;
 import io.lxl.android.stupidCalculator.model.Operation;
 import io.lxl.android.stupidCalculator.model.Operator;
 
-public class MainActivity extends Activity {
+import java.util.Observable;
+import java.util.Observer;
+
+public class MainActivity extends Activity implements Observer {
 
 
-    private static final String DEBUG_TAG = "Velocity";
+    private static final String TAG = "Velocity";
     private TextView mActualView;
     private TextView mCalculusView;
     private Operation mOperation;
+    private boolean mIsRegisteredAsObserver = false;
     private boolean chiffre = true;
 
 
@@ -37,6 +44,7 @@ public class MainActivity extends Activity {
 
         // Init
         mOperation = new Operation();
+        registerObserver();
 
         // Test
         //mOperation.addObject(new Number(9));
@@ -46,13 +54,49 @@ public class MainActivity extends Activity {
         //mCalculusView.setText(mOperation.toString() + " = " + mOperation.getResult());
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterObserver();
+    }
+
+    private void unregisterObserver() {
+        if (mIsRegisteredAsObserver)
+            mOperation.deleteObserver(this);
+    }
+
+    private void registerObserver() {
+        if (!mIsRegisteredAsObserver)
+            mOperation.addObserver(this);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.actionbar, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.action_reset:
+                mOperation.reset();
+                mCalculusView.setText("");
+                return true;
+        }
+        return false;
+    }
+
     public void Updatechar(int nb){
         mActualView.setText(Integer.toString(nb));
     }
 
     public void AddingNB(int nb){
         mOperation.addObject(new Number(nb));
-        mCalculusView.setText(mOperation.toString() + " = ");
+        mCalculusView.setText(mOperation.toString());
         mActualView.setText("");
         this.chiffre = false;
     }
@@ -65,5 +109,12 @@ public class MainActivity extends Activity {
     public boolean isChiffre()
     {
         return chiffre;
+    }
+
+    @Override
+    public void update(Observable observable, Object data) {
+        if (observable instanceof Operation) {
+            mCalculusView.setText(mOperation.toString());
+        }
     }
 }

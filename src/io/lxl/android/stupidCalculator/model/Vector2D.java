@@ -1,7 +1,7 @@
 package io.lxl.android.stupidCalculator.model;
 
 
-import io.lxl.android.stupidCalculator.MathUtils;
+import io.lxl.android.stupidCalculator.utils.MathUtils;
 
 /**
  * Created by pschmitt on 1/11/14.
@@ -22,7 +22,6 @@ public class Vector2D {
     }
 
     /**
-     *
      * @return Return the length (norme) of the vector
      */
     public double length() {
@@ -47,6 +46,7 @@ public class Vector2D {
 
     /**
      * Addition the actual instance of the vector with the param Vector2D
+     *
      * @param vector
      */
     public void add(Vector2D vector) {
@@ -56,6 +56,7 @@ public class Vector2D {
 
     /**
      * Remove the actual instance of the vector with the param Vector2D
+     *
      * @param vector
      */
     public void sub(Vector2D vector) {
@@ -65,6 +66,7 @@ public class Vector2D {
 
     /**
      * Multiply the actual instance of the vector with the param Vector2D
+     *
      * @param vector
      */
     public void mult(Vector2D vector) {
@@ -74,6 +76,7 @@ public class Vector2D {
 
     /**
      * Divise the actual instance of the vector with the param Vector2D
+     *
      * @param vector
      */
     public void div(Vector2D vector) {
@@ -83,6 +86,7 @@ public class Vector2D {
 
     /**
      * Return a new vector2D witch is the scalar of the acual instance of the vector and the param
+     *
      * @param vector
      * @return new Vector2D
      */
@@ -93,6 +97,7 @@ public class Vector2D {
 
     /**
      * Return a new vector witch is the normal vector of the actual instance of vector
+     *
      * @return new Vector2D
      */
     public Vector2D getNormalVector() {
@@ -101,6 +106,7 @@ public class Vector2D {
 
     /**
      * Return a new vector witch is the invert of the actual instance of the vector
+     *
      * @return new Vector2D
      */
     public Vector2D invert() {
@@ -109,6 +115,7 @@ public class Vector2D {
 
     /**
      * Return the angle with the actual instance of the vector and the I vector of the repert
+     *
      * @return float
      */
     public float angle() {
@@ -119,6 +126,7 @@ public class Vector2D {
 
     /**
      * Return the X value of the actual instance of the vector
+     *
      * @return int
      */
     public double getX() {
@@ -127,6 +135,7 @@ public class Vector2D {
 
     /**
      * Set the X value of the actual instance of the vector
+     *
      * @param x
      */
     public void setX(double x) {
@@ -135,6 +144,7 @@ public class Vector2D {
 
     /**
      * Return the Y value of the actual instance of the vector
+     *
      * @return int
      */
     public double getY() {
@@ -143,6 +153,7 @@ public class Vector2D {
 
     /**
      * Set the Y value of the actual instance of the vector
+     *
      * @param y
      */
     public void setY(double y) {
@@ -151,6 +162,7 @@ public class Vector2D {
 
     /**
      * Set the X and Y value of the actual instance of the vector
+     *
      * @param x
      * @param y
      */
@@ -161,19 +173,18 @@ public class Vector2D {
 
     /**
      * Return a string of the actual instance of the vector
+     *
      * @return String
      */
     public String toString() {
         return "X " + mX + " Y " + mY;
     }
 
-    public Vector2D mul(double alpha)
-    {
-         return new Vector2D(alpha * mX, alpha*mY);
+    public Vector2D mul(double alpha) {
+        return new Vector2D(alpha * mX, alpha * mY);
     }
 
-    public Vector2D somme(Vector2D vect)
-    {
-        return new Vector2D(getX()+ vect.getX(),getY()+vect.getY());
+    public Vector2D somme(Vector2D vect) {
+        return new Vector2D(getX() + vect.getX(), getY() + vect.getY());
     }
 }

@@ -88,6 +88,8 @@ public class Operation extends GestureObject {
      */
     public void addObject(GestureObject gestureObject) {
         mComponents.add(gestureObject);
+        setChanged();
+        notifyObservers();
     }
 
     /**
@@ -124,5 +126,11 @@ public class Operation extends GestureObject {
             }
         } */
         return sb.toString();
+    }
+
+    public void reset() {
+        mComponents.clear();
+        setChanged();
+        notifyObservers();
     }
 }

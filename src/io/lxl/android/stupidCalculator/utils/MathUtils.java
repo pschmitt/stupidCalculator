@@ -1,4 +1,4 @@
-package io.lxl.android.stupidCalculator;
+package io.lxl.android.stupidCalculator.utils;
 
 import android.graphics.Point;
 import io.lxl.android.stupidCalculator.model.Vector2D;

@@ -21,7 +21,8 @@ public class MyOnTouchListener implements View.OnTouchListener {
     private double downY;
     //private ArrayList<Vector2D> listpoints;
     int nb = 0;
-    private boolean mTwoFingerSwipe = false;
+    private boolean mRequestedResult = false;
+    private long mTimeRequestResult;
 
     public MyOnTouchListener(MainActivity activity) {
         //listpoints = new ArrayList<Vector2D>();
@@ -29,6 +30,10 @@ public class MyOnTouchListener implements View.OnTouchListener {
         this.nb = 0;
         this.downX = 0;
         this.downY = 0;
+    }
+
+    public void reset() {
+        mRequestedResult = false;
     }
 
     private boolean oneFingerAction(MotionEvent event) {
@@ -42,12 +47,15 @@ public class MyOnTouchListener implements View.OnTouchListener {
                 Vector2D swipe = MathUtils.vectorFromPoint(downX, downY, event.getX(), event.getY());
 
                 double length = swipe.length();
-                if (length > MIN_DISTANCE && nb < 9) {
-                    this.nb++;
+                if (length > MIN_DISTANCE) {
+                    if (nb < 9) {
+                        this.nb++;
+                    } else {
+                        nb = 0;
+                    }
                     this.downX = event.getX();
                     this.downY = event.getY();
                     this.activity.Updatechar(nb);
-
                 }
 
                 /*listpoints.add(new Vector2D(event.getX(),event.getY()));
@@ -74,68 +82,112 @@ public class MyOnTouchListener implements View.OnTouchListener {
                 }*/
                 return true;
             }
-            case MotionEvent.ACTION_UP: {
+            case MotionEvent.ACTION_POINTER_UP:
+            case MotionEvent.ACTION_UP:
                 if (this.activity.isChiffre()) {
                     this.activity.AddingNB(new io.lxl.android.stupidCalculator.model.Number(nb));
                 } else {
-                    this.activity.AddingOP(new Operator(Operator.TYPE.PLUS));
+                    switch (event.getPointerCount()) {
+                        case 1:
+                            this.activity.AddingOP(new Operator(Operator.TYPE.PLUS));
+                            return true;
+                        /*case 2:
+                            this.activity.AddingOP(new Operator(Operator.TYPE.MINUS));
+                            return true;
+                        case 3:
+                            this.activity.AddingOP(new Operator(Operator.TYPE.MULT));
+                            return true;
+                        case 4:
+                            this.activity.AddingOP(new Operator(Operator.TYPE.DIV));
+                            return true; */
+                    }
                 }
                 this.nb = 0;
                 return true;
-            }
-            case MotionEvent.ACTION_POINTER_UP: {
-                switch (event.getPointerCount()) {
-                    case 2:
-                        this.activity.AddingOP(new Operator(Operator.TYPE.MINUS));
-                        return true;
-                    case 3:
-                        this.activity.AddingOP(new Operator(Operator.TYPE.MULT));
-                        return true;
-                    case 4:
-                        this.activity.AddingOP(new Operator(Operator.TYPE.DIV));
-                        return true;
-                }
-            }
         }
         return false;
     }
 
     private boolean twoFingerAction(MotionEvent event) {
+        // TODO: Handle MINUS input
         switch (event.getAction()) {
             case MotionEvent.ACTION_MOVE:
                 Log.d(TAG, "Moving with 2 fingers");
-                break;
+                return true;
             case MotionEvent.ACTION_CANCEL:
                 Log.d(TAG, "Cancel 2 fingers");
-                break;
+                return true;
             case MotionEvent.ACTION_POINTER_UP:
             case MotionEvent.ACTION_UP:
                 Log.d(TAG, "UP 2 fingers");
                 this.activity.AddingOP(new EqualOperator());
-                break;
+                mTimeRequestResult = System.currentTimeMillis();
+                mRequestedResult = true;
+                return true;
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_POINTER_DOWN:
                 Log.d(TAG, "DOWN 2 fingers");
-                break;
+                return true;
         }
 
         return false;
     }
 
+    private boolean threeFinderAction(MotionEvent event) {
+        Log.d(TAG, "3 finger action");
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_POINTER_UP:
+            case MotionEvent.ACTION_UP:
+                this.activity.AddingOP(new Operator(Operator.TYPE.MULT));
+                return true;
+        }
+        return false;
+    }
+
+    private boolean fourFingerAction(MotionEvent event) {
+        Log.d(TAG, "4 finger action");
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_POINTER_UP:
+            case MotionEvent.ACTION_UP:
+                this.activity.AddingOP(new Operator(Operator.TYPE.DIV));
+                return true;
+        }
+        return false;
+    }
+
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+        int action = event.getAction();
+        int actionIndex = event.getActionIndex();
         int maskedAction = event.getActionMasked();
         int nbptAction = event.getPointerCount();
 
-        Log.d(TAG, "Evt action  = " + maskedAction);
+        Log.d(TAG, "Evt action = " + action);
+        Log.d(TAG, "Evt action mask = " + maskedAction);
+        Log.d(TAG, "Evt action index = " + actionIndex);
         Log.d(TAG, "Evt nb touch = " + nbptAction);
+
+        if (mRequestedResult) {
+            if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_POINTER_UP) {
+                if (System.currentTimeMillis() - mTimeRequestResult > 3000) {
+                    activity.reset(); // Note: this sets mRequestedResult to false
+                }
+                return true;
+            }
+            return false;
+        }
 
         switch (nbptAction) {
             case 1:
                 return oneFingerAction(event);
             case 2:
                 return twoFingerAction(event);
+            case 3:
+                return threeFinderAction(event);
+            case 4:
+                return fourFingerAction(event);
         }
+
         return false;
     }
 

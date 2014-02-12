@@ -2,6 +2,7 @@ package io.lxl.android.stupidCalculator.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -9,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import io.lxl.android.stupidCalculator.R;
 import io.lxl.android.stupidCalculator.listener.MyOnTouchListener;
+import io.lxl.android.stupidCalculator.model.EqualOperator;
 import io.lxl.android.stupidCalculator.model.Number;
 import io.lxl.android.stupidCalculator.model.Operation;
 import io.lxl.android.stupidCalculator.model.Operator;
@@ -23,6 +25,7 @@ public class MainActivity extends Activity implements Observer {
     private TextView mActualView;
     private TextView mCalculusView;
     private Operation mOperation;
+    private MyOnTouchListener mTouchListener;
     private boolean mIsRegisteredAsObserver = false;
     private boolean chiffre = true;
 
@@ -35,8 +38,8 @@ public class MainActivity extends Activity implements Observer {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         LinearLayout mainLayout = (LinearLayout)this.findViewById(R.id.main);
-        MyOnTouchListener activitySwipeDetector = new MyOnTouchListener(this);
-        mainLayout.setOnTouchListener(activitySwipeDetector);
+        mTouchListener = new MyOnTouchListener(this);
+        mainLayout.setOnTouchListener(mTouchListener);
 
         // Retain views
         mCalculusView = (TextView) findViewById(R.id.text_calculus);
@@ -64,6 +67,13 @@ public class MainActivity extends Activity implements Observer {
             mOperation.addObserver(this);
     }
 
+    public void reset() {
+        mOperation.reset();
+        resetViews();
+        mTouchListener.reset();
+        chiffre = true;
+    }
+
     private void resetViews() {
         mCalculusView.setText("");
         mActualView.setText("");
@@ -82,9 +92,11 @@ public class MainActivity extends Activity implements Observer {
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.action_reset:
-                mOperation.reset();
-                resetViews();
-                chiffre = true;
+                reset();
+                return true;
+            case R.id.action_undo:
+                mOperation.undo();
+                chiffre = !chiffre;
                 return true;
         }
         return false;
@@ -104,15 +116,14 @@ public class MainActivity extends Activity implements Observer {
 
     // TODO Refactor -> addOperator
     public void AddingOP(Operator op) {
-        mOperation.addObject(op);
         // If user drew an equal sign, show him the result
-        /*
         if (op instanceof EqualOperator) {
-            BigDecimal result = mOperation.getResult();
+            /*BigDecimal result = mOperation.getResult();
             if (result != null)
                 mCalculusView.setText(mCalculusView.getText() + mOperation.getResult().toString());
+                */
         }
-        */
+        mOperation.addObject(op);
         this.chiffre = true;
     }
 
@@ -126,6 +137,7 @@ public class MainActivity extends Activity implements Observer {
     public void update(Observable observable, Object data) {
         if (observable instanceof Operation) {
             mCalculusView.setText(mOperation.toString());
+            Log.d(TAG, "Current Operation: " + mOperation.toString());
         }
     }
 }

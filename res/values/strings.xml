@@ -3,4 +3,5 @@
     <string name="app_name">stupidCalculator</string>
     <string name="preview_calculus">0 + 0 = 0</string>
     <string name="action_reset">Reset</string>
+    <string name="action_undo">Undo</string>
 </resources>

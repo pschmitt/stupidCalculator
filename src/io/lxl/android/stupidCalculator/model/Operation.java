@@ -1,9 +1,11 @@
 package io.lxl.android.stupidCalculator.model;
 
+import android.util.Log;
 import com.udojava.evalex.Expression;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 import java.util.List;
 
 /**
@@ -11,6 +13,7 @@ import java.util.List;
  */
 public class Operation extends GestureObject {
 
+    private static final String TAG = "Operation";
     private List<GestureObject> mComponents;
 
     public Operation() {
@@ -85,19 +88,37 @@ public class Operation extends GestureObject {
         // TODO!
         BigDecimal result;
 
-        Expression expression = new Expression(evalString());
-        result = expression.eval();
-        return result;
+        try {
+            Expression expression = new Expression(evalString());
+            result = expression.eval();
+            return result;
+        } catch (EmptyStackException e) {
+            Log.wtf(TAG, "Cought EmptyStackException: " + evalString());
+            e.printStackTrace();
+        }
+        return new BigDecimal(-1);
     }
 
     /**
      * Add an object to our component list
+     *
      * @param gestureObject The object to add
      */
     public void addObject(GestureObject gestureObject) {
         mComponents.add(gestureObject);
         setChanged();
         notifyObservers();
+    }
+
+    /**
+     * Remove last object from stack (pop)
+     */
+    public void undo() {
+        if (mComponents != null && !mComponents.isEmpty()) {
+            mComponents.remove(mComponents.size() - 1);
+            setChanged();
+            notifyObservers();
+        }
     }
 
     /**
@@ -117,6 +138,7 @@ public class Operation extends GestureObject {
 
     /**
      * String representation
+     *
      * @return This operation as a String (eg: 3+4=)
      */
     @Override
@@ -132,9 +154,9 @@ public class Operation extends GestureObject {
         if (!mComponents.isEmpty()) {
             if (isValid()) {
                 //sb.append("✓");
-                sb.append(getResult().intValue()).append("✓");
+                sb.append(" ").append(getResult().toPlainString()).append(" ✓");
             } else {
-                sb.append("✗");
+                sb.append(" ✗");
             }
         }
         return sb.toString();

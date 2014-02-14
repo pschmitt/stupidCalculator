@@ -34,19 +34,12 @@ public class Operation extends GestureObject {
         // TODO
         GestureObject previousObject = null;
         if (mComponents.isEmpty()) {
-            return true;
-        }
-        GestureObject firstObject = mComponents.get(0);
-        // An operation should start with a number or an operation
-        if (!(firstObject instanceof Number) && !(firstObject instanceof Operation)) {
             return false;
         }
 
-        if (mComponents.size() > 0) {
-            // The last component mustn't be a number etc, it has to be an equal sign
-            GestureObject lastObject = mComponents.get(mComponents.size() - 1);
-            if (!(lastObject instanceof EqualOperator))
-                return false;
+        // TODO: Why 3
+        if (mComponents.size() < 3) {
+            return false;
         }
 
         for (GestureObject gestureObject : mComponents) {
@@ -54,26 +47,13 @@ public class Operation extends GestureObject {
                 // Two consecutive numbers aren't allowed
                 // An operation cannot be preceded by a number
                 if (previousObject != null
-                        && (previousObject instanceof Number || previousObject instanceof Operation)
-                        && !(previousObject instanceof EqualOperator)) {
+                        && (previousObject instanceof Number)) {
                     return false;
                 }
-            } else if (gestureObject instanceof Operator
-                    && !(gestureObject instanceof EqualOperator)) {
+            } else if (gestureObject instanceof Operator) {
                 if (previousObject == null || !(previousObject instanceof Number)) {
                     return false;
                 }
-            } else if (gestureObject instanceof Operation) {
-                if ((previousObject != null || !(previousObject instanceof Operator)
-                        || previousObject instanceof EqualOperator)) {
-                    return false;
-                }
-            } else if (gestureObject instanceof EqualOperator) {
-                // Equal should be the last item in our list
-                if (!gestureObject.equals(mComponents.get(mComponents.size() - 1))) {
-                    return false;
-                }
-
             }
             previousObject = gestureObject;
         }
@@ -165,8 +145,8 @@ public class Operation extends GestureObject {
 
         if (!mComponents.isEmpty()) {
             if (isValid()) {
-                //sb.append("✓");
-                sb.append(" ").append(getResult().toPlainString()).append(" ✓");
+                sb.append(" ✓");
+                // sb.append(" ").append(getResult().toPlainString()).append(" ✓");
             } else {
                 sb.append(" ✗");
             }

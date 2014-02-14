@@ -28,23 +28,23 @@ public class OperatorInputTouchListener extends MyOnTouchListener {
         Log.d(TAG, "Evt action index = " + actionIndex);
         Log.d(TAG, "Evt nb touch = " + nbptAction);
 
-        boolean actionTreated = false;
+        boolean actionTreated = true;
 
-        switch (action) {
+        switch (maskedAction) {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_POINTER_UP:
                 switch (nbptAction) {
                     case 1:
-                        this.activity.AddingOP(new Operator(Operator.TYPE.PLUS));
+                        this.activity.add(new Operator(Operator.TYPE.PLUS));
                         break;
                     case 2:
-                        this.activity.AddingOP(new Operator(Operator.TYPE.MINUS));
+                        this.activity.add(new Operator(Operator.TYPE.MINUS));
                         break;
                     case 3:
-                        this.activity.AddingOP(new Operator(Operator.TYPE.MULT));
+                        this.activity.add(new Operator(Operator.TYPE.MULT));
                         break;
                     case 4:
-                        this.activity.AddingOP(new Operator(Operator.TYPE.DIV));
+                        this.activity.add(new Operator(Operator.TYPE.DIV));
                         break;
                 }
                 actionTreated = true;

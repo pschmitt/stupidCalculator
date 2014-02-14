@@ -1,12 +1,9 @@
 package io.lxl.android.stupidCalculator.listener;
 
-import android.content.Context;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import io.lxl.android.stupidCalculator.activity.MainActivity;
-import io.lxl.android.stupidCalculator.model.EqualOperator;
-import io.lxl.android.stupidCalculator.model.Operator;
 import io.lxl.android.stupidCalculator.model.Vector2D;
 import io.lxl.android.stupidCalculator.utils.MathUtils;
 
@@ -37,11 +34,11 @@ public class EqualInputListener extends MyOnTouchListener {
         Log.d(TAG, "Evt action index = " + actionIndex);
         Log.d(TAG, "Evt nb touch = " + nbptAction);
 
-        if (nbptAction != 2) {
+        /*if (nbptAction != 2) {
             return false;
-        }
+        }*/
 
-        switch (event.getAction()) {
+        switch (maskedAction) {
             case MotionEvent.ACTION_MOVE:
                 Log.d(TAG, "Moving with 2 fingers");
                 return true;
@@ -53,9 +50,8 @@ public class EqualInputListener extends MyOnTouchListener {
                 Vector2D swipe = MathUtils.vectorFromPoint(downX, downY, event.getX(), event.getY());
                 double length = swipe.length();
                 if (length > EQUAL_INPUT_THRESHOLD) {
-                    this.activity.AddingOP(new EqualOperator());
-                } else {
-                    this.activity.AddingOP(new Operator(Operator.TYPE.MINUS));
+                    // this.activity.add(new EqualOperator());
+                    activity.requestCalculation();
                 }
                 return true;
             case MotionEvent.ACTION_POINTER_DOWN:
@@ -65,6 +61,7 @@ public class EqualInputListener extends MyOnTouchListener {
                 return true;
         }
 
-        return false;
+        // FIXME
+        return true;
     }
 }

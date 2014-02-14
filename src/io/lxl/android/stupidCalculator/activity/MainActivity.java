@@ -13,7 +13,6 @@ import io.lxl.android.stupidCalculator.listener.EqualInputListener;
 import io.lxl.android.stupidCalculator.listener.MyOnTouchListener;
 import io.lxl.android.stupidCalculator.listener.NumberInputTouchListener;
 import io.lxl.android.stupidCalculator.listener.OperatorInputTouchListener;
-import io.lxl.android.stupidCalculator.model.EqualOperator;
 import io.lxl.android.stupidCalculator.model.Number;
 import io.lxl.android.stupidCalculator.model.Operation;
 import io.lxl.android.stupidCalculator.model.Operator;
@@ -31,6 +30,8 @@ public class MainActivity extends Activity implements Observer {
     private MyOnTouchListener mPreviousTouchListener;
     private MyOnTouchListener mFirstTouchListener;
     private boolean mIsRegisteredAsObserver = false;
+    private MyOnTouchListener mEqualTouchListener;
+    private boolean mRequestedOperation;
 
     /**
      * Called when the activity is first created.
@@ -40,16 +41,14 @@ public class MainActivity extends Activity implements Observer {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-
-        MyOnTouchListener touchListener2, touchListener3;
+        MyOnTouchListener operatorTouchListener;
         mFirstTouchListener = new NumberInputTouchListener(this);
-        touchListener2 = new OperatorInputTouchListener(this);
-        touchListener3 = new EqualInputListener(this);
+        operatorTouchListener = new OperatorInputTouchListener(this);
+        mEqualTouchListener = new EqualInputListener(this);
 
         // Set next
-        mFirstTouchListener.setNext(touchListener2);
-        touchListener2.setNext(touchListener3);
-        touchListener3.setNext(mFirstTouchListener);
+        mFirstTouchListener.setNext(operatorTouchListener);
+        operatorTouchListener.setNext(mFirstTouchListener);
 
         mCurrentTouchListener = mFirstTouchListener;
         updateTouchListener();
@@ -60,12 +59,14 @@ public class MainActivity extends Activity implements Observer {
         resetViews();
 
         // Init
+        mRequestedOperation = false;
         mOperation = new Operation();
         registerObserver();
     }
 
     private void updateTouchListener() {
         LinearLayout mainLayout = (LinearLayout) this.findViewById(R.id.main);
+        mainLayout.setOnTouchListener(null);
         mainLayout.setOnTouchListener(mCurrentTouchListener);
     }
 
@@ -86,8 +87,8 @@ public class MainActivity extends Activity implements Observer {
     }
 
     public void reset() {
+        mRequestedOperation = false;
         mOperation.reset();
-        resetViews();
         mCurrentTouchListener = mFirstTouchListener;
         updateTouchListener();
         Log.d(TAG, "[RESET] Operation " + mOperation);
@@ -121,6 +122,7 @@ public class MainActivity extends Activity implements Observer {
         switch (item.getItemId()) {
             case R.id.action_reset:
                 reset();
+                resetViews();
                 return true;
             case R.id.action_undo:
                 undo();
@@ -129,29 +131,32 @@ public class MainActivity extends Activity implements Observer {
         return false;
     }
 
-    public void Updatechar(int nb) {
+    public void updateInputView(int nb) {
         mActualView.setText(Integer.toString(nb));
     }
 
+    public void requestCalculation() {
+        mRequestedOperation = true;
+        mCalculusView.setText(mOperation + mOperation.getResult().toString());
+        mActualView.setText("To reset tap the reset button in the ActionBar");
+    }
+
     // TODO Refactor -> addNumber
-    public void AddingNB(Number nb) {
+    public void add(Number nb) {
         mOperation.addObject(nb);
-        mCalculusView.setText(mOperation.toString());
         mActualView.setText("");
+        updateView();
     }
 
     // TODO Refactor -> addOperator
-    public void AddingOP(Operator op) {
-        // If user drew an equal sign, show him the result
-        if (op instanceof EqualOperator) {
-            /*BigDecimal result = mOperation.getResult();
-            if (result != null)
-                mCalcxrdulusView.setText(mCalculusView.getText() + mOperation.getResult().toString());
-                */
-        }
+    public void add(Operator op) {
         mOperation.addObject(op);
+        updateView();
     }
 
+    private void updateView() {
+        mCalculusView.setText(mOperation.toString());
+    }
 
     @Override
     public void update(Observable observable, Object data) {
@@ -159,10 +164,20 @@ public class MainActivity extends Activity implements Observer {
             if (!(mCurrentTouchListener instanceof EqualInputListener)) {
                 mPreviousTouchListener = mCurrentTouchListener;
             }
-            mCurrentTouchListener = mCurrentTouchListener.nextState();
+            // FIXME ?
+            if (mOperation.isValid()) {
+                mCurrentTouchListener = mEqualTouchListener;
+            } else {
+                mCurrentTouchListener = mCurrentTouchListener.nextState();
+            }
+
             updateTouchListener();
-            mCalculusView.setText(mOperation.toString());
-            Log.d(TAG, "[UPDATE] Operation: " + mOperation.toString());
+
+            if (!mRequestedOperation) {
+                updateView();
+            }
+
+            Log.d(TAG, "[UPDATE] Current state: " + mCurrentTouchListener + " Operation: " + mOperation.toString());
         }
     }
 }

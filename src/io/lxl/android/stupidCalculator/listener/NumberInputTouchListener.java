@@ -13,7 +13,8 @@ import io.lxl.android.stupidCalculator.utils.MathUtils;
 public class NumberInputTouchListener extends MyOnTouchListener {
     private static final String TAG = "NumberTouchListener";
 
-    static final int NUMBER_INPUT_THRESHOLD = 100;
+    static final int INPUT_THRESHOLD = 30;
+    static final int NUMBER_INCREASE_THRESHOLD = 100;
     private double downX;
     private double downY;
     private int nb;
@@ -39,14 +40,14 @@ public class NumberInputTouchListener extends MyOnTouchListener {
             case MotionEvent.ACTION_DOWN: {
                 this.downX = event.getX();
                 this.downY = event.getY();
-                this.activity.Updatechar(nb);
+                this.activity.updateInputView(nb);
                 return true;
             }
             case MotionEvent.ACTION_MOVE: {
                 Vector2D swipe = MathUtils.vectorFromPoint(downX, downY, event.getX(), event.getY());
 
                 double length = swipe.length();
-                if (length > NUMBER_INPUT_THRESHOLD) {
+                if (length > NUMBER_INCREASE_THRESHOLD) {
                     if (nb < 9) {
                         this.nb++;
                     } else {
@@ -54,13 +55,17 @@ public class NumberInputTouchListener extends MyOnTouchListener {
                     }
                     this.downX = event.getX();
                     this.downY = event.getY();
-                    this.activity.Updatechar(nb);
+                    this.activity.updateInputView(nb);
                 }
                 return true;
             }
             case MotionEvent.ACTION_UP:
-                this.activity.AddingNB(new io.lxl.android.stupidCalculator.model.Number(nb));
-                this.nb = 0;
+                Vector2D swipe = MathUtils.vectorFromPoint(downX, downY, event.getX(), event.getY());
+                double length = swipe.length();
+                if (length > INPUT_THRESHOLD) {
+                    this.activity.add(new io.lxl.android.stupidCalculator.model.Number(nb));
+                    this.nb = 0;
+                }
                 return true;
         }
         return false;

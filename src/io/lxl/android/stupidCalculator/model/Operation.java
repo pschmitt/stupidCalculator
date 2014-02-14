@@ -20,6 +20,11 @@ public class Operation extends GestureObject {
         mComponents = new ArrayList<GestureObject>();
     }
 
+    public boolean isEmpty() {
+        return mComponents.isEmpty();
+    }
+
+
     /**
      * Check whether this Operation is valid in its current state
      *
@@ -134,6 +139,13 @@ public class Operation extends GestureObject {
             }
         }
         return sb.toString();
+    }
+
+    public boolean lastAddedObjectWasAnEqualSign() {
+        if (mComponents.size() > 0) {
+            return (mComponents.get(mComponents.size() - 1) instanceof EqualOperator);
+        }
+        return false;
     }
 
     /**

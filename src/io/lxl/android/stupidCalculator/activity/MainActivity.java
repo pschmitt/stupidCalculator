@@ -9,7 +9,10 @@ import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import io.lxl.android.stupidCalculator.R;
+import io.lxl.android.stupidCalculator.listener.EqualInputListener;
 import io.lxl.android.stupidCalculator.listener.MyOnTouchListener;
+import io.lxl.android.stupidCalculator.listener.NumberInputTouchListener;
+import io.lxl.android.stupidCalculator.listener.OperatorInputTouchListener;
 import io.lxl.android.stupidCalculator.model.EqualOperator;
 import io.lxl.android.stupidCalculator.model.Number;
 import io.lxl.android.stupidCalculator.model.Operation;
@@ -20,15 +23,14 @@ import java.util.Observer;
 
 public class MainActivity extends Activity implements Observer {
 
-
-    private static final String TAG = "Velocity";
+    private static final String TAG = "MainActivity";
     private TextView mActualView;
     private TextView mCalculusView;
     private Operation mOperation;
-    private MyOnTouchListener mTouchListener;
+    private MyOnTouchListener mCurrentTouchListener;
+    private MyOnTouchListener mPreviousTouchListener;
+    private MyOnTouchListener mFirstTouchListener;
     private boolean mIsRegisteredAsObserver = false;
-    private boolean chiffre = true;
-
 
     /**
      * Called when the activity is first created.
@@ -37,9 +39,20 @@ public class MainActivity extends Activity implements Observer {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        LinearLayout mainLayout = (LinearLayout)this.findViewById(R.id.main);
-        mTouchListener = new MyOnTouchListener(this);
-        mainLayout.setOnTouchListener(mTouchListener);
+
+
+        MyOnTouchListener touchListener2, touchListener3;
+        mFirstTouchListener = new NumberInputTouchListener(this);
+        touchListener2 = new OperatorInputTouchListener(this);
+        touchListener3 = new EqualInputListener(this);
+
+        // Set next
+        mFirstTouchListener.setNext(touchListener2);
+        touchListener2.setNext(touchListener3);
+        touchListener3.setNext(mFirstTouchListener);
+
+        mCurrentTouchListener = mFirstTouchListener;
+        updateTouchListener();
 
         // Retain views
         mCalculusView = (TextView) findViewById(R.id.text_calculus);
@@ -49,6 +62,11 @@ public class MainActivity extends Activity implements Observer {
         // Init
         mOperation = new Operation();
         registerObserver();
+    }
+
+    private void updateTouchListener() {
+        LinearLayout mainLayout = (LinearLayout) this.findViewById(R.id.main);
+        mainLayout.setOnTouchListener(mCurrentTouchListener);
     }
 
     @Override
@@ -70,8 +88,18 @@ public class MainActivity extends Activity implements Observer {
     public void reset() {
         mOperation.reset();
         resetViews();
-        mTouchListener.reset();
-        chiffre = true;
+        mCurrentTouchListener = mFirstTouchListener;
+        updateTouchListener();
+        Log.d(TAG, "[RESET] Operation " + mOperation);
+    }
+
+    public void undo() {
+        if (!mOperation.isEmpty()) {
+            mOperation.undo();
+            mCurrentTouchListener = mPreviousTouchListener;
+            updateTouchListener();
+        }
+        Log.d(TAG, "[UNDO] Operation " + mOperation);
     }
 
     private void resetViews() {
@@ -95,14 +123,13 @@ public class MainActivity extends Activity implements Observer {
                 reset();
                 return true;
             case R.id.action_undo:
-                mOperation.undo();
-                chiffre = !chiffre;
+                undo();
                 return true;
         }
         return false;
     }
 
-    public void Updatechar(int nb){
+    public void Updatechar(int nb) {
         mActualView.setText(Integer.toString(nb));
     }
 
@@ -111,7 +138,6 @@ public class MainActivity extends Activity implements Observer {
         mOperation.addObject(nb);
         mCalculusView.setText(mOperation.toString());
         mActualView.setText("");
-        this.chiffre = false;
     }
 
     // TODO Refactor -> addOperator
@@ -120,24 +146,23 @@ public class MainActivity extends Activity implements Observer {
         if (op instanceof EqualOperator) {
             /*BigDecimal result = mOperation.getResult();
             if (result != null)
-                mCalculusView.setText(mCalculusView.getText() + mOperation.getResult().toString());
+                mCalcxrdulusView.setText(mCalculusView.getText() + mOperation.getResult().toString());
                 */
         }
         mOperation.addObject(op);
-        this.chiffre = true;
     }
 
-    // TODO Refactor -> lastInputWasNumber
-    public boolean isChiffre()
-    {
-        return chiffre;
-    }
 
     @Override
     public void update(Observable observable, Object data) {
         if (observable instanceof Operation) {
+            if (!(mCurrentTouchListener instanceof EqualInputListener)) {
+                mPreviousTouchListener = mCurrentTouchListener;
+            }
+            mCurrentTouchListener = mCurrentTouchListener.nextState();
+            updateTouchListener();
             mCalculusView.setText(mOperation.toString());
-            Log.d(TAG, "Current Operation: " + mOperation.toString());
+            Log.d(TAG, "[UPDATE] Operation: " + mOperation.toString());
         }
     }
 }

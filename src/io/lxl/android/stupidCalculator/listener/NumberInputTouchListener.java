@@ -40,6 +40,7 @@ public class NumberInputTouchListener extends MyOnTouchListener {
             case MotionEvent.ACTION_DOWN: {
                 this.downX = event.getX();
                 this.downY = event.getY();
+                nb = 0;
                 this.activity.updateInputView(nb);
                 return true;
             }

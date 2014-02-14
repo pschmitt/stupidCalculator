@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import io.lxl.android.stupidCalculator.R;
@@ -91,6 +92,7 @@ public class MainActivity extends Activity implements Observer {
         mOperation.reset();
         mCurrentTouchListener = mFirstTouchListener;
         updateTouchListener();
+        findViewById(R.id.instructions).setVisibility(View.GONE);
         Log.d(TAG, "[RESET] Operation " + mOperation);
     }
 
@@ -138,7 +140,7 @@ public class MainActivity extends Activity implements Observer {
     public void requestCalculation() {
         mRequestedOperation = true;
         mCalculusView.setText(mOperation + mOperation.getResult().toString());
-        mActualView.setText("To reset tap the reset button in the ActionBar");
+        findViewById(R.id.instructions).setVisibility(View.VISIBLE);
     }
 
     // TODO Refactor -> addNumber

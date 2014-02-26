@@ -5,4 +5,7 @@
     <string name="action_reset">Reset</string>
     <string name="action_undo">Undo</string>
     <string name="reset_instructions">To reset tap the reset button in the ActionBar</string>
+    <string name="instructions_equal_sign">Draw an equal sign to get the result</string>
+    <string name="instructions_operator">Tap with one finger for a \'+\', two for a \'-\', three for a \'×\', four for a \'/\'</string>
+    <string name="instructions_number_input">Move around to input a number</string>
 </resources>

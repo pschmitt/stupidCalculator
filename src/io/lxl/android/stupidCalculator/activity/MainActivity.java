@@ -21,11 +21,12 @@ import io.lxl.android.stupidCalculator.model.Operator;
 import java.util.Observable;
 import java.util.Observer;
 
-public class MainActivity extends Activity implements Observer {
+public class MainActivity extends Activity implements Observer, View.OnClickListener {
 
     private static final String TAG = "MainActivity";
     private TextView mActualView;
     private TextView mCalculusView;
+    private TextView mInstructionsView;
     private Operation mOperation;
     private MyOnTouchListener mCurrentTouchListener;
     private MyOnTouchListener mPreviousTouchListener;
@@ -47,6 +48,12 @@ public class MainActivity extends Activity implements Observer {
         operatorTouchListener = new OperatorInputTouchListener(this);
         mEqualTouchListener = new EqualInputListener(this);
 
+        // Retain views
+        mCalculusView = (TextView) findViewById(R.id.text_calculus);
+        mActualView = (TextView) findViewById(R.id.actual_calculus);
+        mInstructionsView = (TextView) findViewById(R.id.instructions);
+        mInstructionsView.setOnClickListener(this);
+
         // Set next
         mFirstTouchListener.setNext(operatorTouchListener);
         operatorTouchListener.setNext(mFirstTouchListener);
@@ -54,9 +61,6 @@ public class MainActivity extends Activity implements Observer {
         mCurrentTouchListener = mFirstTouchListener;
         updateTouchListener();
 
-        // Retain views
-        mCalculusView = (TextView) findViewById(R.id.text_calculus);
-        mActualView = (TextView) findViewById(R.id.actual_calculus);
         resetViews();
 
         // Init
@@ -69,6 +73,7 @@ public class MainActivity extends Activity implements Observer {
         LinearLayout mainLayout = (LinearLayout) this.findViewById(R.id.main);
         mainLayout.setOnTouchListener(null);
         mainLayout.setOnTouchListener(mCurrentTouchListener);
+        updateInstructions();
     }
 
     @Override
@@ -92,7 +97,6 @@ public class MainActivity extends Activity implements Observer {
         mOperation.reset();
         mCurrentTouchListener = mFirstTouchListener;
         updateTouchListener();
-        findViewById(R.id.instructions).setVisibility(View.GONE);
         Log.d(TAG, "[RESET] Operation " + mOperation);
     }
 
@@ -137,10 +141,24 @@ public class MainActivity extends Activity implements Observer {
         mActualView.setText(Integer.toString(nb));
     }
 
+    public void updateInstructions() {
+        if (mCurrentTouchListener instanceof NumberInputTouchListener) {
+            mInstructionsView.setText(getString(R.string.instructions_number_input));
+        } else if (mCurrentTouchListener instanceof OperatorInputTouchListener) {
+            mInstructionsView.setText(getString(R.string.instructions_operator));
+        } else if (mCurrentTouchListener instanceof EqualInputListener) {
+            if (mRequestedOperation) {
+                mInstructionsView.setText(getString(R.string.reset_instructions));
+            } else {
+                mInstructionsView.setText(getString(R.string.instructions_equal_sign));
+            }
+        }
+    }
+
     public void requestCalculation() {
         mRequestedOperation = true;
         mCalculusView.setText(mOperation + mOperation.getResult().toString());
-        findViewById(R.id.instructions).setVisibility(View.VISIBLE);
+        updateInstructions();
     }
 
     // TODO Refactor -> addNumber
@@ -180,6 +198,13 @@ public class MainActivity extends Activity implements Observer {
             }
 
             Log.d(TAG, "[UPDATE] Current state: " + mCurrentTouchListener + " Operation: " + mOperation.toString());
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (mRequestedOperation) {
+            reset();
         }
     }
 }

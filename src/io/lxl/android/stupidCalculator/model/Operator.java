@@ -49,7 +49,7 @@ public class Operator extends GestureObject {
                 str = "/";
                 break;
             case MULT:
-                str = "×";
+                str = "";
                 break;
         }
         return str;

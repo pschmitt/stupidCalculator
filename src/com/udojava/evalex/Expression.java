@@ -25,7 +25,7 @@
  * 
  */
 package com.udojava.evalex;
-/** test git **/
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;

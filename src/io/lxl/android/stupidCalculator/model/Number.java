@@ -13,6 +13,14 @@ public class Number extends GestureObject {
         mValue = value;
     }
 
+    public void next() {
+        if (mValue > 8) {
+            mValue = 0;
+        } else {
+            mValue++;
+        }
+    }
+
     @Override
     String evalString() {
         return toString();

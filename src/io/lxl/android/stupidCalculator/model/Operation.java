@@ -128,13 +128,7 @@ public class Operation extends GestureObject {
         return false;
     }
 
-    /**
-     * String representation
-     *
-     * @return This operation as a String (eg: 3+4=)
-     */
-    @Override
-    public String toString() {
+    public String getStringRepresentation(boolean includeValidity) {
         StringBuilder sb = new StringBuilder();
         String prefix = "";
         for (GestureObject gestureObject : mComponents) {
@@ -142,16 +136,27 @@ public class Operation extends GestureObject {
             prefix = " ";
             sb.append(gestureObject.toString());
         }
-
-        if (!mComponents.isEmpty()) {
-            if (isValid()) {
-                sb.append(" ✓");
-                // sb.append(" ").append(getResult().toPlainString()).append(" ✓");
-            } else {
-                sb.append(" ✗");
+        if (includeValidity) {
+            if (!mComponents.isEmpty()) {
+                if (isValid()) {
+                    sb.append(" ✓");
+                    // sb.append(" ").append(getResult().toPlainString()).append(" ✓");
+                } else {
+                    sb.append(" ✗");
+                }
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * String representation
+     *
+     * @return This operation as a String (eg: 3+4=)
+     */
+    @Override
+    public String toString() {
+        return getStringRepresentation(true);
     }
 
     public void reset() {

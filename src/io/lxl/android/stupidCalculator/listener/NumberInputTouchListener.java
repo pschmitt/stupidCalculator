@@ -13,7 +13,7 @@ import io.lxl.android.stupidCalculator.utils.MathUtils;
 public class NumberInputTouchListener extends MyOnTouchListener {
     private static final String TAG = "NumberTouchListener";
 
-    static final int INPUT_THRESHOLD = 30;
+    static final int INPUT_THRESHOLD = 0;
     static final int NUMBER_INCREASE_THRESHOLD = 100;
     private double downX;
     private double downY;

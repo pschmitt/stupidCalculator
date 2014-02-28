@@ -18,6 +18,7 @@ import io.lxl.android.stupidCalculator.model.Number;
 import io.lxl.android.stupidCalculator.model.Operation;
 import io.lxl.android.stupidCalculator.model.Operator;
 
+import java.math.BigDecimal;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -157,7 +158,14 @@ public class MainActivity extends Activity implements Observer, View.OnClickList
 
     public void requestCalculation() {
         mRequestedOperation = true;
-        mCalculusView.setText(mOperation + mOperation.getResult().toString());
+        String resultString = "±∞";
+        try {
+            BigDecimal result = mOperation.getResult();
+            resultString = result.toString();
+        } catch (ArithmeticException e) {
+            Log.e(TAG, "Division by zero...");
+        }
+        mCalculusView.setText(mOperation.getStringRepresentation(false) + " = " + resultString);
         updateInstructions();
     }
 

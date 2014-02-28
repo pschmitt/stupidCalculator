@@ -58,6 +58,7 @@ public class MainActivity extends Activity implements Observer, View.OnClickList
         // Set next
         mFirstTouchListener.setNext(operatorTouchListener);
         operatorTouchListener.setNext(mFirstTouchListener);
+        mEqualTouchListener.setNext(mFirstTouchListener);
 
         mCurrentTouchListener = mFirstTouchListener;
         updateTouchListener();
@@ -103,12 +104,11 @@ public class MainActivity extends Activity implements Observer, View.OnClickList
 
     public void undo() {
         if (!mOperation.isEmpty()) {
-            mOperation.undo();
             //mCurrentTouchListener = mPreviousTouchListener;
-            if (mCurrentTouchListener instanceof EqualInputListener) {
-                mCurrentTouchListener = mFirstTouchListener;
-            }
-            updateTouchListener();
+            //if (mCurrentTouchListener instanceof EqualInputListener) {
+            //    mCurrentTouchListener = mFirstTouchListener;
+            //}
+            mOperation.undo();
         }
         Log.d(TAG, "[UNDO] Operation " + mOperation);
     }
@@ -168,7 +168,7 @@ public class MainActivity extends Activity implements Observer, View.OnClickList
         } catch (ArithmeticException e) {
             Log.e(TAG, "Division by zero...");
         }
-        mCalculusView.setText(mOperation.getStringRepresentation(true) + " = " + resultString);
+        mCalculusView.setText(mOperation.getStringRepresentation(false) + " = " + resultString);
         updateInstructions();
     }
 

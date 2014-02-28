@@ -11,6 +11,7 @@ import io.lxl.android.stupidCalculator.model.Operator;
  */
 public class OperatorInputTouchListener extends MyOnTouchListener {
     private static final String TAG = "OpTouchListener";
+    private int nbFingers;
 
     public OperatorInputTouchListener(MainActivity mainActivity) {
         super(mainActivity);
@@ -31,9 +32,12 @@ public class OperatorInputTouchListener extends MyOnTouchListener {
         boolean actionTreated = true;
 
         switch (maskedAction) {
+            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_POINTER_DOWN:
+                    nbFingers = nbptAction;
+                    break;
             case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_POINTER_UP:
-                switch (nbptAction) {
+                switch (nbFingers) {
                     case 1:
                         this.activity.add(new Operator(Operator.TYPE.PLUS));
                         break;

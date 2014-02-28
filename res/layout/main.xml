@@ -5,10 +5,6 @@
               android:layout_height="fill_parent"
               android:id="@+id/main"
         >
-    <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" android:padding="8dp" android:gravity="left" android:weightSum="1">
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -16,7 +12,7 @@
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="@string/preview_calculus"
                 android:id="@+id/text_calculus"
-                android:textSize="55sp" android:gravity="right"/>
+                android:textSize="55sp" android:padding="8dp" android:gravity="right"/>
 
         <LinearLayout
             android:orientation="vertical"
@@ -28,7 +24,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="0"
+                    android:text="@string/default_number_input"
                     android:textSize="210sp"
                     android:id="@+id/actual_calculus"
                     android:gravity="center"
@@ -46,8 +42,5 @@
                     android:layout_gravity="top"
                     android:layout_marginBottom="30dp"/>
         </LinearLayout>
-
-
     </LinearLayout>
-</LinearLayout>
 

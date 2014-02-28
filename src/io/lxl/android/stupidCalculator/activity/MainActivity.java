@@ -70,7 +70,10 @@ public class MainActivity extends Activity implements Observer, View.OnClickList
         registerObserver();
     }
 
+    boolean isUpdate;
+
     private void updateTouchListener() {
+
         LinearLayout mainLayout = (LinearLayout) this.findViewById(R.id.main);
         mainLayout.setOnTouchListener(null);
         mainLayout.setOnTouchListener(mCurrentTouchListener);
@@ -161,7 +164,7 @@ public class MainActivity extends Activity implements Observer, View.OnClickList
         String resultString = "±∞";
         try {
             BigDecimal result = mOperation.getResult();
-            resultString = result.toString();
+            resultString = result.toBigInteger().toString();
         } catch (ArithmeticException e) {
             Log.e(TAG, "Division by zero...");
         }
@@ -183,7 +186,7 @@ public class MainActivity extends Activity implements Observer, View.OnClickList
     }
 
     private void updateView() {
-        mCalculusView.setText(mOperation.toString());
+        mCalculusView.setText(mOperation.getStringRepresentation(false));
     }
 
     @Override
@@ -198,13 +201,10 @@ public class MainActivity extends Activity implements Observer, View.OnClickList
             } else {
                 mCurrentTouchListener = mCurrentTouchListener.nextState();
             }
-
             updateTouchListener();
-
             if (!mRequestedOperation) {
                 updateView();
             }
-
             Log.d(TAG, "[UPDATE] Current state: " + mCurrentTouchListener + " Operation: " + mOperation.toString());
         }
     }

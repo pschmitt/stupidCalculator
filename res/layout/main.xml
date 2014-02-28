@@ -18,11 +18,13 @@
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
+            android:layout_gravity="bottom"
+            android:gravity="bottom"
             android:padding="10dp">
 
             <TextView
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="fill_parent"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/default_number_input"
                     android:textSize="210sp"
@@ -32,14 +34,13 @@
 
             <TextView
                     android:layout_width="fill_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="140dp"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/reset_instructions"
-                    android:background="@android:color/transparent"
                     android:textSize="40sp"
                     android:id="@+id/instructions"
-                    android:gravity="center|bottom|top"
-                    android:layout_gravity="top"
+                    android:gravity="center_horizontal|bottom"
+                    android:layout_gravity="bottom"
                     android:layout_marginBottom="30dp"/>
         </LinearLayout>
     </LinearLayout>

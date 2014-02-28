@@ -70,10 +70,7 @@ public class MainActivity extends Activity implements Observer, View.OnClickList
         registerObserver();
     }
 
-    boolean isUpdate;
-
     private void updateTouchListener() {
-
         LinearLayout mainLayout = (LinearLayout) this.findViewById(R.id.main);
         mainLayout.setOnTouchListener(null);
         mainLayout.setOnTouchListener(mCurrentTouchListener);
